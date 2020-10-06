@@ -87,7 +87,7 @@ which is the following JSON object `RoleStruct`:
 >     {
 >      "name": String,
 >      "type":  String,
->      "casting": [Integer],
+>      "actors": [Integer],
 >      "movie": Integer,
 >     }
 >```
@@ -97,9 +97,9 @@ Where:
 | Attribute | Type          | Description                                                          |
 | :---      | :-----------: | -------------------------------------------------------------------: |
 | name      | String        |  Role name in the movie, with maximum 150 Characters. Cannot be null |
-| type      | String        |  Type of role: Lead Actor, Secondary Actor, extra |
+| types     | String        |  Type of role: Lead Actor, Secondary Actor, extra |
 | movie     | Integer       |  ID of the movie |
-| casting   | Array[String] |  ID of actors casted for the role |
+| actors    | Array[String] |  ID of actors casted for the role |
 
 
 **Movies**  
@@ -406,6 +406,7 @@ Create a role for a movie in the database
 The `ResponseStruct` for this endpoint is composed as follows:
 ```json
 {
+    "role": RoleStruct,
     "id": Integer
 }
 ```
@@ -570,6 +571,7 @@ Create a role for a movie in the database
 The `ResponseStruct` for this endpoint is composed as follows:
 ```json
 {
+    "role": RoleStruct,
     "id": Integer
 }
 ```
@@ -626,7 +628,7 @@ Read an actress/actor from the database
 The `ResponseStruct` for this endpoint is composed as follows:
 ```json
 {
-    "movie": ActorStruct,   
+    "actor": ActorStruct,   
     "id": Integer
 }
 ```
