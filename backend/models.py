@@ -289,12 +289,12 @@ class Roles(db.Model):
     name = db.Column(db.String(150), nullable=False)
     types = db.Column(db.String(), nullable=False)
     actors = db.relationship('Actors', secondary=roles_actors_items,lazy='subquery',backref=db.backref('roles', lazy=True))
-    movie = db.Column(db.Integer, db.ForeignKey('Movies.id'),nullable=False)
+    movie_id = db.Column(db.Integer, db.ForeignKey('Movies.id'),nullable=False)
 
     def __init__(name, types, movie_id):
         self.name = name
         self.types = types
-        self.movie = movie_id
+        self.movie_id = movie_id
     def insert(self):
         responseStruct = None
         try:
