@@ -2,7 +2,7 @@ import os
 import json
 from datetime import datetime
 from sqlalchemy import Column, String, Integer, create_engine
-from  import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 
 
 database_path = os.environ.get('DATABASE_PATH') 
@@ -94,8 +94,9 @@ class Movies(db.Model):
         return {
             'name': self.name,
             'photoUrl': self.photoUrl,
-            'release': self.release,
-            'genres': self.genres
+            'release': self.release.isoformat(),
+            'genres': self.genres,
+            'roles': [role.format() for role in self.roles]
         }
     def response(self):
         return {
@@ -142,6 +143,21 @@ class Movies(db.Model):
             return None
         limit = min(offset + MAX_MOVIES_PER_PAGE,total-1)
         return { 'movies': [movie.format() for movie in movies][offset:limit], 'total': total, 'count':limit-offset}
+    @staticmethod
+    def read_artists(id):
+        """Get overall artist casting for a movie
+        Keyword arguments:
+            id -- the integer id of the movie
+        """
+        movie = Movies.query.get(id)
+        if movie is None:
+            return None
+        actors = []
+        for role in movie.roles:
+            for actor in role.actors:
+                if actor not in actors:
+                    actors.append(actor)
+        return { 'actors': [actor.format() for actor in actors], 'movie': movie.format()}
 
 class Actors(db.Model):
     __tablename__ = 'actors'
@@ -299,7 +315,8 @@ class Roles(db.Model):
         return {
             'name': self.name,
             'types': self.types,
-            'movie': self.movie
+            'movie': self.movie,
+            'actors': [actor.format() for actor in self.actors]
         }
     def response(self):
         return {
