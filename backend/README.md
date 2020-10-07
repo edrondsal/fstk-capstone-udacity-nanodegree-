@@ -36,7 +36,7 @@ From within the `backend` directory first ensure you are working using your crea
 To run the server, execute:
 
 ```bash
-export (or set) FLASK_APP=
+export (or set) FLASK_APP=flaskapp
 flask run
 ```
 
@@ -87,7 +87,7 @@ which is the following JSON object `RoleStruct`:
 >     {
 >      "name": String,
 >      "type":  String,
->      "actors": [Integer],
+>      "actors": [ActorStruct],
 >      "movie": Integer,
 >     }
 >```
@@ -110,7 +110,7 @@ which is the following JSON object `MovieStruct`:
 >      "photoUrl": String,
 >      "release": Date,
 >      "genres":  [String],
->      "roles": [Integer],
+>      "roles": [RoleStruct],
 >     }
 >```
 
@@ -191,7 +191,7 @@ Protected endpoints require a JWT token with the correct claims
 * [Update Actor](#actor-update)          : `PATCH /actors/<int:id>`
 * [Update Role](#role-update)            : `PATCH /roles/<int:id>`
 * [Delete Movie](#movie-delete)          : `DELETE /movies/<int:id>`
-* [Delete Role](#actor-delete)           : `DELETE /roles/<int:id>`
+* [Delete Role](#actor-delete)           : `DELETE /actors/<int:id>`
 
 ### List Movies <a name="movies"></a>  
 Fetches an array of movies with pagination

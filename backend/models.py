@@ -3,9 +3,11 @@ import json
 from datetime import datetime
 from sqlalchemy import Column, String, Integer, create_engine
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 
 database_path = os.environ.get('DATABASE_PATH') 
+
 
 db = SQLAlchemy()
 
@@ -13,12 +15,12 @@ db = SQLAlchemy()
 setup_db(app)
     binds a flask application and a SQLAlchemy service
 '''
-def setup_db(app, database_path=database_path):
-    app.config["SQLALCHEMY_DATABASE_URI"] = database_path
+def setup_db(app, database=database_path):
+    app.config["SQLALCHEMY_DATABASE_URI"] = database
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
-    db.create_all()
+    migrate = Migrate(app,db)
     
 
 '''
@@ -45,7 +47,7 @@ roles_actors_items = db.Table('actors_for_roles',
 )
 
 class Movies(db.Model):
-    __tablename__ = 'movies'
+    __tablename__ = 'Movies'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), nullable=False)
     photoUrl = db.Column(db.String(), nullable=True,default="")
@@ -160,7 +162,7 @@ class Movies(db.Model):
         return { 'actors': [actor.format() for actor in actors], 'movie': movie.format()}
 
 class Actors(db.Model):
-    __tablename__ = 'actors'
+    __tablename__ = 'Actors'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), nullable=False)
     photoUrl = db.Column(db.String(), nullable=True,default="")
@@ -268,7 +270,7 @@ class Actors(db.Model):
         return { 'actors': [item.format() for item in items][offset:limit], 'total': total, 'count':limit-offset}
 
 class Roles(db.Model):
-    __tablename__ = 'roles'
+    __tablename__ = 'Roles'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), nullable=False)
     types = db.Column(db.String(), nullable=False)
