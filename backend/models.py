@@ -120,6 +120,13 @@ class Movies(db.Model):
             return {'movies':[]}
         return { 'movies': [movie.format() for movie in movies] }
     @staticmethod
+    def get(id):
+        """Get the movie for an id
+        Keyword arguments:
+            id -- the integer id of the movie
+        """
+        return Movies.query.get(id)
+    @staticmethod
     def read(id):
         """Get the movie for an id
         Keyword arguments:
@@ -228,20 +235,27 @@ class Actors(db.Model):
             searchGender -- the String term to search in the gender of the actors
             searchAge -- the Integer value to search in the age of the actors
         """
-        if searchName == None and searchGender == None and searchAge == None:
+        if searchName is None and searchGender is None and searchAge is None:
             return {'actors':[]}
         query_search = Actors.query
-        if searchName != None:
+        if searchName is not None:
             search = f'%{searchName}%'
             query_search = query_search.filter(Actors.name.ilike(search))
-        if searchGender != None:
+        if searchGender is not None:
             query_search = query_search.filter(Actors.gender == searchGender)
-        if searchAge != None:
+        if searchAge is not None:
             query_search = query_search.filter(Actors.age == searchAge)
         actors = query_search.all()
         if len(actors) == 0:
             return {'actors':[]} 
         return {'actors': [actor.format() for actor in actors]}
+    @staticmethod
+    def get(id):
+        """Get the actor for an id
+        Keyword arguments:
+            id -- the integer id of the actor
+        """
+        return Actors.query.get(id)    
     @staticmethod
     def read(id):
         """Get the actor for an id
@@ -327,6 +341,12 @@ class Roles(db.Model):
             }
     def __repr__(self):
         return f'{self.format()}'
-
+    @staticmethod
+    def get(id):
+        """Get the role for an id
+        Keyword arguments:
+            id -- the integer id of the role
+        """
+        return Roles.query.get(id)
 
 

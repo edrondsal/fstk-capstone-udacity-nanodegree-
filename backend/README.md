@@ -324,7 +324,8 @@ Create a movie in the database
 {
     "name": String,
     "release": Date,
-    "genres": [String]
+    "genres": [String],
+    "photourl": String (Optional)
 }
 ```
 
@@ -360,7 +361,8 @@ Create an actress/actor in the database
 {
     "name": String,
     "gender": String,
-    "age": Integer
+    "age": Integer,
+    "photourl": String (Optional)
 }
 ```
 
@@ -488,7 +490,8 @@ Create a movie in the database
 {
     "name": String,
     "release": Date,
-    "genres": [String]
+    "genres": [String],
+    "photourl": String
 }
 ```
 
@@ -559,7 +562,6 @@ Create a role for a movie in the database
 {
     "name": String,
     "type": String,
-    "movie": Integer,
     "actor": Integer
 }
 ```
