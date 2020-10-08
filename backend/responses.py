@@ -1,6 +1,12 @@
 import os
 from flask import jsonify
 
+class AppError(Exception):
+    def __init__(self, status_code, title, detail,type_error = None):
+        self.status_code = status_code
+        self.type_url = type_error if type_error is not None else "about:blank"
+        self.title = title
+        self.detail = detail
 
 class Response(object):
     @staticmethod
@@ -11,12 +17,12 @@ class Response(object):
             }
         return jsonify(response)
     @staticmethod
-    def error_response(statusCode,title,detail,type_url=None):
+    def error_response(app_error):
         response = {
             'success': False,
-            'status': statusCode,
-            'type': type_url if type_url is not None else "about:blank",
-            'title': title,
-            'detail': detail,
+            'status': app_error.status_Code,
+            'type': app_error.type_url,
+            'title': app_error.title,
+            'detail': app_error.detail,
             'instance': "about:blank"
             }

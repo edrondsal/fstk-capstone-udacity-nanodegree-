@@ -1,5 +1,6 @@
 import os
 import json
+import sys
 from datetime import datetime
 from sqlalchemy import Column, String, Integer, create_engine
 from flask_sqlalchemy import SQLAlchemy
@@ -55,7 +56,7 @@ class Movies(db.Model):
     genres =  db.Column(db.ARRAY(db.String()),nullable=False,server_default="{}") 
     roles = db.relationship('Roles', secondary=movies_roles_items,lazy='subquery',backref=db.backref('movie', lazy=True))
     
-    def __init__(name, photo, release, genres):
+    def __init__(self,name, photo, release, genres):
         self.name = name
         self.photoUrl = photo
         self.release = release
@@ -176,7 +177,7 @@ class Actors(db.Model):
     gender = db.Column(db.String(),nullable=False)
     age =  db.Column(db.Integer,nullable=False)
     
-    def __init__(name, photo, gender, age):
+    def __init__(self,name, photo, gender, age):
         self.name = name
         self.photoUrl = photo
         self.gender = gender
@@ -291,7 +292,7 @@ class Roles(db.Model):
     actors = db.relationship('Actors', secondary=roles_actors_items,lazy='subquery',backref=db.backref('roles', lazy=True))
     movie_id = db.Column(db.Integer, db.ForeignKey('Movies.id'),nullable=False)
 
-    def __init__(name, types, movie_id):
+    def __init__(self,name, types, movie_id):
         self.name = name
         self.types = types
         self.movie_id = movie_id

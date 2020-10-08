@@ -5,7 +5,8 @@ from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from models import setup_db, Movies, Roles, Actors
-from responses import Response
+from responses import Response, AppError
+from datetime import datetime
 
 
 
@@ -33,7 +34,7 @@ def create_app(test_config=None):
         page = request.args.get('page', -1, type=int)
         responseStruct = Movies.read_all(page)
         if responseStruct is None:
-            abort(404)
+            raise AppError(title='Wrong Pagination', detail='page not found', status_code=401)
         return Response.success_response(responseStruct), 200
     
     @app.route('/movies/search', methods=['POST'])
@@ -41,7 +42,7 @@ def create_app(test_config=None):
         body = request.get_json()
         searchTerm = body.get('searchTerm',None)
         if searchTerm is None:
-            abort(422)
+            raise AppError(title='Wrong Search Request', detail='searcTerm not found in body of the request', status_code=401)
         responseStruct = Movies.search(searchTerm)
         return Response.success_response(responseStruct), 200
 
@@ -49,7 +50,7 @@ def create_app(test_config=None):
     def read_movie_actors(id):
         responseStruct = Movies.read_artists(id)
         if responseStruct is None:
-            abort(404)
+            raise AppError(title='Wrong Id', detail='Id request not found', status_code=404)
         return Response.success_response(responseStruct)
 
     # Start of CRUD methods endpoints
@@ -61,7 +62,7 @@ def create_app(test_config=None):
         timestamp = body.get('timestamp',None)
         photoUrl = body.get('photourl',"")
         if name is None or genres is None or timestamp is None:
-            abort(422)
+            raise AppError(title='Wrong Create Request', detail='Minimum required data not present', status_code=422)
         release = datetime.fromtimestamp(timestamp)
         movie = Movies(name=name,photo=photoUrl,release=release,genres=genres)
         responseStruct = movie.insert()
@@ -73,14 +74,14 @@ def create_app(test_config=None):
     def read_movie(id):
         response_data = Movies.read(id)
         if response_data is None:
-            abort(404)
+            raise AppError(title='Wrong Id', detail='Id request not found', status_code=404)
         return Response.success_response(response_data) , 200
 
     @app.route('/movies/<int:id>', methods=['PATCH'])
     def update_movie(id):
         movie = Movies.get(id)
         if movie is None:
-            abort(404)
+            raise AppError(title='Wrong Id', detail='Id request not found', status_code=404)
         body = request.get_json()
         name = body.get('name',None)
         genres = body.get('genres',None)
@@ -106,7 +107,7 @@ def create_app(test_config=None):
     def delete_movie(id):   
         movie = Movies.get(id)
         if movie is None:
-            abort(404)
+            raise AppError(title='Wrong Id', detail='Id request not found', status_code=404)
         responseStruct = movie.delete()
         if responseStruct is None:
             abort(500)
@@ -157,14 +158,14 @@ def create_app(test_config=None):
     def read_actor(id):
         response_data = Actors.read(id)
         if response_data is None:
-            abort(404)
+            raise AppError(title='Wrong Id', detail='Id request not found', status_code=404)
         return Response.success_response(response_data) , 200
 
     @app.route('/actors/<int:id>', methods=['PATCH'])
     def update_actor(id):  
         actor = Actors.get(id)
         if actor is None:
-            abort(404)
+            raise AppError(title='Wrong Id', detail='Id request not found', status_code=404)
         body = request.get_json()
         name = body.get('name',None)
         gender = body.get('gender',None)
@@ -189,7 +190,7 @@ def create_app(test_config=None):
     def delete_actor(id): 
         actor = Actors.get(id)
         if actor is None:
-            abort(404)
+            raise AppError(title='Wrong Id', detail='Id request not found', status_code=404)
         responseStruct = actor.delete()
         if responseStruct is None:
             abort(500)
@@ -228,7 +229,7 @@ def create_app(test_config=None):
             abort(422)
         role = Roles.get(id)
         if role is None:
-            abort(404)
+            raise AppError(title='Wrong Id', detail='Id request not found', status_code=404)
         if name is not None:
             role.name = name
         if roletype is not None:
@@ -245,4 +246,7 @@ def create_app(test_config=None):
 
     #  Error Handlers
     #  ----------------------------------------------------------------
+    @app.errorhandler(AppError)
+    def response_error(e):
+        return jsonify(Response.error_response(e)), e.status_code
     return app
