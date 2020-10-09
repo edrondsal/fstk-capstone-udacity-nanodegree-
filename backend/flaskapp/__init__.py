@@ -34,7 +34,7 @@ def create_app(test_config=None):
         page = request.args.get('page', -1, type=int)
         responseStruct = Movies.read_all(page)
         if responseStruct is None:
-            raise AppError(title='Wrong Pagination', detail='page not found', status_code=401)
+            raise AppError(title='Wrong Pagination', detail='page not found', status_code=404)
         return Response.success_response(responseStruct), 200
     
     @app.route('/movies/search', methods=['POST'])
@@ -42,7 +42,7 @@ def create_app(test_config=None):
         body = request.get_json()
         searchTerm = body.get('searchTerm',None)
         if searchTerm is None:
-            raise AppError(title='Wrong Search Request', detail='searcTerm not found in body of the request', status_code=401)
+            raise AppError(title='Wrong Search Request', detail='searcTerm not found in body of the request', status_code=404)
         responseStruct = Movies.search(searchTerm)
         return Response.success_response(responseStruct), 200
 
@@ -132,8 +132,8 @@ def create_app(test_config=None):
         body = request.get_json()
         searchName = body.get('searchName',None)
         searchGender = body.get('searchGender',None)
-        searchName = body.get('searchAge',None)
-        if searchName is None and searchGender is None and searchName is None:
+        searchAge = body.get('searchAge',None)
+        if searchName is None and searchGender is None and searchAge is None:
             raise AppError(title='Wrong Search Request', detail='all search types are missing', status_code=422)
         responseStruct = Actors.search(searchName=searchName,searchGender=searchGender,searchAge=searchAge)
         return Response.success_response(responseStruct), 200        
