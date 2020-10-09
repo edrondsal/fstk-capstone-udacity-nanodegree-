@@ -62,12 +62,12 @@ def create_app(test_config=None):
         timestamp = body.get('timestamp',None)
         photoUrl = body.get('photourl',"")
         if name is None or genres is None or timestamp is None:
-            raise AppError(title='Wrong Create Request', detail='Minimum required data not present', status_code=422)
+            raise AppError(title='Wrong Create Request', detail='Name, Genres or Timestamp is missing', status_code=422)
         release = datetime.fromtimestamp(timestamp)
         movie = Movies(name=name,photo=photoUrl,release=release,genres=genres)
         responseStruct = movie.insert()
         if responseStruct is None:
-            abort(500)
+            raise AppError(title='Internal Server Error', detail='Internal problem while processing the request', status_code=500)
         return Response.success_response(responseStruct), 201
 
     @app.route('/movies/<int:id>', methods=['GET'])
@@ -88,7 +88,7 @@ def create_app(test_config=None):
         timestamp = body.get('timestamp',None)
         photoUrl = body.get('photourl',None)
         if name is None and genres is None and timestamp is None and photoUrl is None:
-            abort(422)   
+            raise AppError(title='Wrong Update Request', detail='Name, Genres, Timestamp and photoUrl are missing', status_code=422)   
         if name is not None:
             movie.name = name
         if genres is not None:
@@ -100,7 +100,7 @@ def create_app(test_config=None):
             movie.photoUrl = photoUrl
         responseStruct = movie.update()
         if responseStruct is None:
-            abort(500)
+            raise AppError(title='Internal Server Error', detail='Internal problem while processing the request', status_code=500)
         return Response.success_response(responseStruct), 200
                    
     @app.route('/movies/<int:id>', methods=['DELETE'])
@@ -110,7 +110,7 @@ def create_app(test_config=None):
             raise AppError(title='Wrong Id', detail='Id request not found', status_code=404)
         responseStruct = movie.delete()
         if responseStruct is None:
-            abort(500)
+            raise AppError(title='Internal Server Error', detail='Internal problem while processing the request', status_code=500)
         return Response.success_response(responseStruct), 200
     
     #  Actors Endpoints
@@ -124,7 +124,7 @@ def create_app(test_config=None):
         page = request.args.get('page', -1, type=int)
         responseStruct = Actors.read_all(page)
         if responseStruct is None:
-            abort(404)
+            raise AppError(title='Wrong Pagination', detail='Page requested does not exist', status_code=404)
         return Response.success_response(responseStruct), 200        
     
     @app.route('/actors/search', methods=['POST'])
@@ -134,7 +134,7 @@ def create_app(test_config=None):
         searchGender = body.get('searchGender',None)
         searchName = body.get('searchAge',None)
         if searchName is None and searchGender is None and searchName is None:
-            abort(422)
+            raise AppError(title='Wrong Search Request', detail='all search types are missing', status_code=422)
         responseStruct = Actors.search(searchName=searchName,searchGender=searchGender,searchAge=searchAge)
         return Response.success_response(responseStruct), 200        
 
@@ -147,11 +147,11 @@ def create_app(test_config=None):
         age = body.get('age',None)
         photoUrl = body.get('photourl',"")
         if name is None or gender is None or age is None:
-            abort(422)
+            raise AppError(title='Wrong Create Request', detail='Name, Gender or Age is missing', status_code=422)
         actor = Actors(name=name,photo=photoUrl,gender=gender,age=age)
         responseStruct = actor.insert()
         if responseStruct is None:
-            abort(500)
+            raise AppError(title='Internal Server Error', detail='Internal problem while processing the request', status_code=500)
         return Response.success_response(responseStruct), 201
 
     @app.route('/actors/<int:id>', methods=['GET'])
@@ -172,7 +172,7 @@ def create_app(test_config=None):
         age = body.get('age',None)
         photoUrl = body.get('photourl',None)
         if name is None and gender is None and age is None and photoUrl is None:
-            abort(422)   
+            raise AppError(title='Wrong Update Request', detail='Name, Gender, Age and photoUrl are missing', status_code=422)  
         if name is not None:
             actor.name = name
         if gender is not None:
@@ -183,7 +183,7 @@ def create_app(test_config=None):
             actor.photoUrl = photoUrl
         responseStruct = actor.update()
         if responseStruct is None:
-            abort(500)
+            raise AppError(title='Internal Server Error', detail='Internal problem while processing the request', status_code=500)
         return Response.success_response(responseStruct), 200
     
     @app.route('/actors/<int:id>', methods=['DELETE'])
@@ -193,7 +193,7 @@ def create_app(test_config=None):
             raise AppError(title='Wrong Id', detail='Id request not found', status_code=404)
         responseStruct = actor.delete()
         if responseStruct is None:
-            abort(500)
+            raise AppError(title='Internal Server Error', detail='Internal problem while processing the request', status_code=500)
         return Response.success_response(responseStruct), 200
 
     #  Roles Endpoints
@@ -206,17 +206,17 @@ def create_app(test_config=None):
         roletype = body.get('type',None)
         movie_id = body.get('movie',None)
         if name is None or roletype is None or movie_id is None:
-            abort(422)
+            raise AppError(title='Wrong Create Request', detail='Name, Tye of Role or Movie ID is missing', status_code=422)
         movie = Movies.get(movie_id)
         if movie is None:
-            abort(422)
+            raise AppError(title='Wrong Create Request', detail='Movie with requested ID does not exist', status_code=422)
         role = Roles(name=name,types=roletype,movie_id=movie_id)
         movie.roles.append(role)
 
         responseStruct = role.insert()
-        temp = movie.update()
-        if responseStruct is None or temp is None:
-            abort(500)
+        
+        if responseStruct is None:
+            raise AppError(title='Internal Server Error', detail='Internal problem while processing the request', status_code=500)
         return Response.success_response(responseStruct), 201
         
     @app.route('/roles/<int:id>', methods=['PATCH'])
@@ -226,7 +226,7 @@ def create_app(test_config=None):
         roletype = body.get('type',None)
         actor_id = body.get('actor',None)  
         if name is None and roletype is None and actor_id is None:
-            abort(422)
+            raise AppError(title='Wrong Patch Request', detail='Name, Type of Role, and Actor ID are missing', status_code=422)
         role = Roles.get(id)
         if role is None:
             raise AppError(title='Wrong Id', detail='Id request not found', status_code=404)
@@ -237,16 +237,16 @@ def create_app(test_config=None):
         if actor_id is not None:
             actor = Actors.get(actor_id)
             if actor is None:
-                abort(422)
+                raise AppError(title='Wrong Patch Request', detail='Actor with requested ID does not exist', status_code=422)
             role.actors.append(actor)
         responseStruct = role.update()
         if responseStruct is None:
-            abort(500)
+             raise AppError(title='Internal Server Error', detail='Internal problem while processing the request', status_code=500)
         return Response.success_response(responseStruct), 200    
 
     #  Error Handlers
     #  ----------------------------------------------------------------
     @app.errorhandler(AppError)
     def response_error(e):
-        return jsonify(Response.error_response(e)), e.status_code
+        return Response.error_response(e), e.status_code
     return app

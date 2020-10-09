@@ -146,12 +146,12 @@ class Movies(db.Model):
         movies = Movies.query.all()
         total = len(movies)
 
-        if page == -1:
+        if page <= 0:
             return { 'movies': [movie.format() for movie in movies], 'total': total, 'count': total}
         offset = (page-1)*MAX_MOVIES_PER_PAGE
         if offset > total:
             return None
-        limit = min(offset + MAX_MOVIES_PER_PAGE,total-1)
+        limit = min(offset + MAX_MOVIES_PER_PAGE,total)
         return { 'movies': [movie.format() for movie in movies][offset:limit], 'total': total, 'count':limit-offset}
     @staticmethod
     def read_artists(id):
@@ -276,12 +276,12 @@ class Actors(db.Model):
         items = Actors.query.all()
         total = len(items)
 
-        if page == -1:
+        if page <= 0:
             return { 'actors': [item.format() for item in items], 'total': total, 'count': total}
         offset = (page-1)*MAX_ACTORS_PER_PAGE
         if offset > total:
             return None
-        limit = min(offset + MAX_ACTORS_PER_PAGE,total-1)
+        limit = min(offset + MAX_ACTORS_PER_PAGE,total)
         return { 'actors': [item.format() for item in items][offset:limit], 'total': total, 'count':limit-offset}
 
 class Roles(db.Model):
@@ -332,7 +332,7 @@ class Roles(db.Model):
         return {
             'name': self.name,
             'types': self.types,
-            'movie': self.movie,
+            'movie': self.movie_id,
             'actors': [actor.format() for actor in self.actors]
         }
     def response(self):

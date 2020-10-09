@@ -20,9 +20,10 @@ class Response(object):
     def error_response(app_error):
         response = {
             'success': False,
-            'status': app_error.status_Code,
+            'status': app_error.status_code,
             'type': app_error.type_url,
             'title': app_error.title,
             'detail': app_error.detail,
             'instance': "about:blank"
             }
+        return jsonify(response)
