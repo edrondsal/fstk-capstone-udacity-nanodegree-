@@ -167,7 +167,7 @@ class Movies(db.Model):
             for actor in role.actors:
                 if actor not in actors:
                     actors.append(actor)
-        return { 'actors': [actor.format() for actor in actors], 'movie': movie.format()}
+        return { 'actors': [actor.format() for actor in actors]}
 
 class Actors(db.Model):
     __tablename__ = 'Actors'

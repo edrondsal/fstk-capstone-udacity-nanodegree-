@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from models import setup_db, Movies, Roles, Actors
 from responses import Response, AppError
+from authorization import requires_auth
 from datetime import datetime
 
 
@@ -27,6 +28,7 @@ def create_app(test_config=None):
     #  ----------------------------------------------------------------  
     # start list methods endpoints 
     @app.route('/movies', methods=['GET'])
+    @requires_auth('get:movies')
     def get_movies():
         """Retrieve the movies for the page requested in the query
         Keyword arguments:
@@ -38,15 +40,17 @@ def create_app(test_config=None):
         return Response.success_response(responseStruct), 200
     
     @app.route('/movies/search', methods=['POST'])
+    @requires_auth('get:movies')
     def search_movies():
         body = request.get_json()
         searchTerm = body.get('searchTerm',None)
         if searchTerm is None:
-            raise AppError(title='Wrong Search Request', detail='searcTerm not found in body of the request', status_code=404)
+            raise AppError(title='Wrong Search Request', detail='searchTerm not found in body of the request', status_code=404)
         responseStruct = Movies.search(searchTerm)
         return Response.success_response(responseStruct), 200
 
     @app.route('/movies/<int:id>/actors', methods=['GET'])
+    @requires_auth('get:actors')
     def read_movie_actors(id):
         responseStruct = Movies.read_artists(id)
         if responseStruct is None:
@@ -55,6 +59,7 @@ def create_app(test_config=None):
 
     # Start of CRUD methods endpoints
     @app.route('/movies', methods=['POST'])
+    @requires_auth('post:movies')
     def create_movie():
         body = request.get_json()
         name = body.get('name',None)
@@ -71,6 +76,7 @@ def create_app(test_config=None):
         return Response.success_response(responseStruct), 201
 
     @app.route('/movies/<int:id>', methods=['GET'])
+    @requires_auth('get:movies')
     def read_movie(id):
         response_data = Movies.read(id)
         if response_data is None:
@@ -78,6 +84,7 @@ def create_app(test_config=None):
         return Response.success_response(response_data) , 200
 
     @app.route('/movies/<int:id>', methods=['PATCH'])
+    @requires_auth('patch:movies')
     def update_movie(id):
         movie = Movies.get(id)
         if movie is None:
@@ -104,6 +111,7 @@ def create_app(test_config=None):
         return Response.success_response(responseStruct), 200
                    
     @app.route('/movies/<int:id>', methods=['DELETE'])
+    @requires_auth('delete:movies')
     def delete_movie(id):   
         movie = Movies.get(id)
         if movie is None:
@@ -117,6 +125,7 @@ def create_app(test_config=None):
     #  ----------------------------------------------------------------    
     # start list methods endpoints 
     @app.route('/actors', methods=['GET'])
+    @requires_auth('get:actors')
     def get_actors():
         """Retrieve the actors for the page requested in the query
         Keyword arguments:
@@ -128,6 +137,7 @@ def create_app(test_config=None):
         return Response.success_response(responseStruct), 200        
     
     @app.route('/actors/search', methods=['POST'])
+    @requires_auth('get:actors')
     def search_actors():
         body = request.get_json()
         searchName = body.get('searchName',None)
@@ -140,6 +150,7 @@ def create_app(test_config=None):
 
     # Start of CRUD methods endpoints
     @app.route('/actors', methods=['POST'])
+    @requires_auth('post:actors')
     def create_actor():
         body = request.get_json()
         name = body.get('name',None)
@@ -155,6 +166,7 @@ def create_app(test_config=None):
         return Response.success_response(responseStruct), 201
 
     @app.route('/actors/<int:id>', methods=['GET'])
+    @requires_auth('get:actors')
     def read_actor(id):
         response_data = Actors.read(id)
         if response_data is None:
@@ -162,6 +174,7 @@ def create_app(test_config=None):
         return Response.success_response(response_data) , 200
 
     @app.route('/actors/<int:id>', methods=['PATCH'])
+    @requires_auth('patch:actors')
     def update_actor(id):  
         actor = Actors.get(id)
         if actor is None:
@@ -187,6 +200,7 @@ def create_app(test_config=None):
         return Response.success_response(responseStruct), 200
     
     @app.route('/actors/<int:id>', methods=['DELETE'])
+    @requires_auth('delete:actors')
     def delete_actor(id): 
         actor = Actors.get(id)
         if actor is None:
@@ -200,6 +214,7 @@ def create_app(test_config=None):
     #  ----------------------------------------------------------------     
     # Start of CRUD methods endpoints
     @app.route('/roles', methods=['POST'])
+    @requires_auth('post:roles')
     def create_role():
         body = request.get_json()
         name = body.get('name',None)
@@ -220,6 +235,7 @@ def create_app(test_config=None):
         return Response.success_response(responseStruct), 201
         
     @app.route('/roles/<int:id>', methods=['PATCH'])
+    @requires_auth('patch:roles')
     def update_role(id):
         body = request.get_json()
         name = body.get('name',None)

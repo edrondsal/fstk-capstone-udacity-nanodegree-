@@ -224,7 +224,7 @@ Fetches an array of actors for the movie
 
 ***Method*** : `GET`
 
-***Auth required*** : Yes, with `get:movies` and `get:actors` claim
+***Auth required*** : Yes, with `get:actors` claim
 
 ***Data constraints***: No data required in the body of the request
 
@@ -235,8 +235,7 @@ Fetches an array of actors for the movie
 The `ResponseStruct` for this endpoint is composed as follows:
 ```json
 {
-    "actors": [ActorStruct],
-    "movie": MovieStruct
+    "actors": [ActorStruct]
 }
 ```
 
