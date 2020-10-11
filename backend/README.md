@@ -37,11 +37,16 @@ To run the server, execute:
 
 ```bash
 export (or set) FLASK_APP=flaskapp
+export (or set) FLASK_ENV=development
 flask run
 ```
 
 ### Testing
-To run the tests, run
+To run the tests, please recover the test database supplied `castingagency_test.sql` then run
+
+```
+ python unit-test-app.py
+```
 
 
 ## API Reference <a name="api-reference"></a>
@@ -322,7 +327,7 @@ Create a movie in the database
 ```json
 {
     "name": String,
-    "release": Date,
+    "timestamp": Seconds from 1970,
     "genres": [String],
     "photourl": String (Optional)
 }
@@ -488,7 +493,7 @@ Create a movie in the database
 ```json
 {
     "name": String,
-    "release": Date,
+    "timestamp": Seconds from 1970,
     "genres": [String],
     "photourl": String
 }
@@ -640,3 +645,59 @@ The `ResponseStruct` for this endpoint is composed as follows:
 3. Internal server error
 
 ## Heroku Deployment <a name="heroku"></a>
+
+### FakeUser1: Casting Assistant:
+
+To get a token:
+
+```
+POST https://fsnder.eu.auth0.com/oauth/token
+BODY
+{
+	"client_id":"2tTHvNGQlhIospDrFKmTePyxJr1HDOsF",
+	"client_secret":"K_0R5oRyz4h8PslNeytUrDmk1QjHT4vUMI5_nYe1Qa6_yz7dXYZ1KesLZl4JOMlV",
+	"audience":"castingagencyapi",
+	"grant_type":"password",
+	"username": "fakeuser1@email.com",
+	"password": "userFake001"
+}
+```
+
+```
+token: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlJCbVJDamJXcldadktmWlFPS0k4SyJ9.eyJpc3MiOiJodHRwczovL2ZzbmRlci5ldS5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NWY2Yjk1NDU1ZGY0YmEwMDY5MWRjNDhkIiwiYXVkIjoiY2FzdGluZ2FnZW5jeWFwaSIsImlhdCI6MTYwMjQxNzg4NiwiZXhwIjoxNjAyNTA0Mjg2LCJhenAiOiIydFRIdk5HUWxoSW9zcERyRkttVGVQeXhKcjFIRE9zRiIsImd0eSI6InBhc3N3b3JkIiwicGVybWlzc2lvbnMiOlsiZ2V0OmFjdG9ycyIsImdldDptb3ZpZXMiXX0.ZANEOvoNCbzlDg0bjxspha53Un_zbpCR-vh6L_At2MjHz8r6f0pGZbXXnQDM5vGtkH35G1ydTV6oTyVDftOdZf36CVelZ8DT18iMDGczkTqz7l-JPmaJ7hxgqQGiI-GL4K84Sm-MegXEuinldDaLSiOhPeZ-hEsiIK6WEZxaU9S8eifXZvI_i8c1EywhU_Ya4Y_jaXZPWqhyEeH3WYUi_AQc5GLlAdbqKgQBAUlqxoUioznCiPq7H2Aussxuwb0Z0jrAAmviXhfFuY6XaSOz6tZ_USrGO3vcrtOKfpyS_9CxTRJmFsUggWO54O8JOYtzQ5o_aQFdHc_5gbo3Eoueqw
+```
+
+### FakeUser2: Casting Director:
+
+POST https://fsnder.eu.auth0.com/oauth/token
+BODY
+{
+	"client_id":"2tTHvNGQlhIospDrFKmTePyxJr1HDOsF",
+	"client_secret":"K_0R5oRyz4h8PslNeytUrDmk1QjHT4vUMI5_nYe1Qa6_yz7dXYZ1KesLZl4JOMlV",
+	"audience":"castingagencyapi",
+	"grant_type":"password",
+	"username": "fakeuser2@email.com",
+	"password": "userFake002"
+}
+
+```
+token: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlJCbVJDamJXcldadktmWlFPS0k4SyJ9.eyJpc3MiOiJodHRwczovL2ZzbmRlci5ldS5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NWY2Yjk1NmRhNmFmNjQwMDcxZDNmODEzIiwiYXVkIjoiY2FzdGluZ2FnZW5jeWFwaSIsImlhdCI6MTYwMjQxODAxNCwiZXhwIjoxNjAyNTA0NDE0LCJhenAiOiIydFRIdk5HUWxoSW9zcERyRkttVGVQeXhKcjFIRE9zRiIsImd0eSI6InBhc3N3b3JkIiwicGVybWlzc2lvbnMiOlsiZGVsZXRlOmFjdG9ycyIsImdldDphY3RvcnMiLCJnZXQ6bW92aWVzIiwicGF0Y2g6YWN0b3JzIiwicGF0Y2g6bW92aWVzIiwicGF0Y2g6cm9sZXMiLCJwb3N0OmFjdG9ycyJdfQ.Oqf_YgPDW2WajbwCgSA2ufIPdhcbAqVIHJNslRfpSDR9vsqdKhpdcHpZQ6L61V_SMDNKM0ZIW-SP6X-gR6F91RA4mOMqQCrejcuZua_7zGqKmnQrkqPMBfpr2ObqkbB2HYsjk1M0s3Htl2qUKdwIzP1_Z1N_LCXI35DhtpSe850JmpH5mqC1zrF1wdaL9gHLkX3XPlEniiaPu1zcp9uv85seXyzR8wnABNcrnj73WzMMErnEE-iTZj_apPgOco_hZiZ1fi2qVUMkt788muAcTgMliY5pMu_l_48lxxZf6EPIEKHyGTgiQqzFfAMIXxtwt-PI2kB_k1Jcft_ESLyWQQ
+```
+
+### FakeUser3: Executive Producer:
+
+POST https://fsnder.eu.auth0.com/oauth/token
+BODY
+{
+	"client_id":"2tTHvNGQlhIospDrFKmTePyxJr1HDOsF",
+	"client_secret":"K_0R5oRyz4h8PslNeytUrDmk1QjHT4vUMI5_nYe1Qa6_yz7dXYZ1KesLZl4JOMlV",
+	"audience":"castingagencyapi",
+	"grant_type":"password",
+	"username": "fakeuser3@email.com",
+	"password": "userFake003"
+}
+
+```
+token: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlJCbVJDamJXcldadktmWlFPS0k4SyJ9.eyJpc3MiOiJodHRwczovL2ZzbmRlci5ldS5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NWY4MmYyNTIxMGVlNWEwMDY4MmEzZTA3IiwiYXVkIjoiY2FzdGluZ2FnZW5jeWFwaSIsImlhdCI6MTYwMjQxODA0MCwiZXhwIjoxNjAyNTA0NDQwLCJhenAiOiIydFRIdk5HUWxoSW9zcERyRkttVGVQeXhKcjFIRE9zRiIsImd0eSI6InBhc3N3b3JkIiwicGVybWlzc2lvbnMiOlsiZGVsZXRlOmFjdG9ycyIsImRlbGV0ZTptb3ZpZXMiLCJnZXQ6YWN0b3JzIiwiZ2V0Om1vdmllcyIsInBhdGNoOmFjdG9ycyIsInBhdGNoOm1vdmllcyIsInBhdGNoOnJvbGVzIiwicG9zdDphY3RvcnMiLCJwb3N0Om1vdmllcyIsInBvc3Q6cm9sZXMiXX0.YxOTgvM1ZvmdY9lGJ6lYcjAKWmoLFQuKXOd2GAr0Im2z763nn-OMyRnxMRItnGAd60GRDAclkCfZge_VO-fKeDp37J_dzfUNhYeXbhwNL-vZ9_anT9isv7IkO81HS2J0crcRrHlPnGP2WBMDhLJMCHVOg_EfEj7hXOCANDIytnv9YlkrxethAsME_nIYCAHjHXn8quJLxz9eByqKs93cdZf5HTQjibfg3i-2O0m62qwoqFiQZPf98nwExnfnDqd-zvweZC8UwzagBxYyo09SgFVg7KwdkSuztCfOV9pGnLCLKeZAg0kAGiFl78h3KghYz9V1S1Fq10yfB4q13b3gjw
+```
+

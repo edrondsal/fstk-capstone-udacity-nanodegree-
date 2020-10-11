@@ -6,7 +6,7 @@ The objective is to start from scratch with the proposed idea of a Casting Agenc
 
 ## Project Structure
 
-For this Capstone project, a Full Stack app is proposed, with not only the backend but also a front end to complete test the API Endpoints.
+For this Capstone project, a Full Stack app is proposed, with the backend and tokens to complete test the API Endpoints.
 
 1. [`./backend/`](./backend/README.md)
 2. [`./frontend/`](./frontend/README.md)
@@ -24,7 +24,7 @@ The `./backend` directory contains a full server with the following dependencies
 
 [View the README.md within ./backend for more details.](./backend/README.md)
 
-AWS Container deployment is not used because of cost. But the project will be ready for deployment using Docker, Kubernetes on AWS (EKS), CodeBuild and CodePipeline
+AWS Container deployment is not used because of cost.
 
 ### Frontend
 
@@ -43,6 +43,6 @@ The [backed](./backend/) is developed following TDD process as follows:
 4. When this first cycle is finished (all test pass), the test will be completed with Authorization/Authentification
 5. Then the server will be completed and re-tested
 6. The Front End will include the Auth0 sign in with default test accounts
-7. When the complete the server will be deployed in Heroky
-8. Finally the Dockerfile, and all configurations files for AWS EKS deployment will be defined to have an app AWS-ready
+7. Then the complete the server will be deployed in Heroky
+
 
