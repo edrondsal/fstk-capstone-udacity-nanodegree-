@@ -646,6 +646,10 @@ The `ResponseStruct` for this endpoint is composed as follows:
 
 ## Heroku Deployment <a name="heroku"></a>
 
+The app can found in the Heroky address `https://erscapstonefund.herokuapp.com/`
+
+In order to success in the request please use the following tokens for each kind of user.
+
 ### FakeUser1: Casting Assistant:
 
 To get a token:
